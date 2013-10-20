@@ -15,43 +15,45 @@ BODY ({BASE_STREAM}|{POSITION}|{DISJUNCTION})*
 
 #define INVALID_WORD 5
 
-int currentPosition;
 char codon[4];
 char incompleteCodon[3];
+int currentPosition;
 int mustContinueScanning;
 int scanningStarted;
 
-int indexForRepeater(char * str);
-void repeat(char* toPrepend, char * toRepeat, int upperBound);
-void process(char * codons, int len);
 char * createCodon(char * codons);
 char * createString(char * codons, int len);
 char * toAminoAcid(char * codon);
-void incrementCurrentPosition();
-int getCurrentPosition();
-void iterativeProcess(int numberOfAvailableBases, char * toRepeat);
-void restartIncompleteCodon();
-void trim(char * str, int * len);
-int isScanning();
 int containsSubstring(char * str, char * substr);
+int getCurrentPosition();
+int indexForRepeater(char * str);
+int indexOfString(char *source, char *substring);
+int isScanning();
+void incrementCurrentPosition();
 void init();
+void iterativeProcess(int numberOfAvailableBases, char * toRepeat);
+void process(char * codons, unsigned long len);
+void repeat(char* toPrepend, char * toRepeat, int upperBound);
+void restartIncompleteCodon();
+void trim(char * str, unsigned long * len);
 
+/////////////// ACÁ EMPIEZAN LAS REGLAS
 %}
 %%
 
 {HEADER}{BODY}{END}$ {
-	scanningStarted = 1;
+    scanningStarted = 1;
 //printf("\n\n\n(START)(%s)\n\n\n",yytext);
-	REJECT;
+    REJECT;
 }
 
 
 {HEADER} {
-	if( !isScanning() ){
+    if( !isScanning() ){
 printf("1(%d)",scanningStarted);
-	 return INVALID_WORD;
-	}
-	incrementCurrentPosition();
+     return INVALID_WORD;
+    }
+    incrementCurrentPosition();
 }
 
 ({BASE}{BLANK}){0,2}{DISJUNCTION} {
@@ -136,10 +138,10 @@ printf("5");
   char * positionStr = createString(yytext+prependSize+1, yyleng - 2 - prependSize);
   int position = atoi(positionStr);
   if(position != getCurrentPosition()+prependSize+1){
-	printf("error!! %d ... %d",position,getCurrentPosition());
+    printf("error!! %d ... %d",position,getCurrentPosition());
   }else{
    if(prependSize >0){
-	 process(prepend,prependSize);
+     process(prepend,prependSize);
    }
  }
 
@@ -151,8 +153,6 @@ printf("5");
 }
 
 ({BASE}{BLANK}){1,2}{END}$ {
-	
-
   trim(yytext, &yyleng);
   int stopSize = containsSubstring(yytext,"STOP")?4:3;
   int prependSize = yyleng - stopSize;
@@ -179,6 +179,7 @@ printf("6");
 }
 
 %%
+/////////////// ACÁ TERMINAN LAS REGLAS
 
 int containsSubstring(char * str, char * substr){
  return ( strstr(str,substr) != NULL );
@@ -188,9 +189,9 @@ int isScanning(){
  return scanningStarted == 1;
 }
 
-int indexOfString(char *source, char *substring){
- char *dest = strstr(source, substring);
- return dest - source;
+int indexOfString(char *source, char *substring) {
+    char *dest = strstr(source, substring);
+    return dest - source;
 }
 
 
@@ -205,12 +206,12 @@ int indexForRepeater(char * str){
 }
 
 void repeat(char* toPrepend, char * toRepeat, int index){
- char dest[strlen(toPrepend)+strlen(toRepeat)+1];
- strcpy( dest, toPrepend);
- strcat( dest, toRepeat); 
- process(dest,strlen(dest));
+char dest[strlen(toPrepend)+strlen(toRepeat)+1];
+strcpy( dest, toPrepend);
+strcat( dest, toRepeat); 
+process(dest,strlen(dest));
 //printf("index=%d   cp=%d    ", index, getCurrentPosition());
- if(index > getCurrentPosition()){
+if(index > getCurrentPosition()){
 //printf("1- %s   ",toRepeat);
   int numberOfAvailableBases = index - getCurrentPosition() - 1;
   iterativeProcess(numberOfAvailableBases, toRepeat);
@@ -238,7 +239,7 @@ void iterativeProcess(int numberOfAvailableBases, char * toRepeat){
  free(generatedBases);
 }
 
-void trim(char * str, int * len){
+void trim(char * str, unsigned long * len){
  int blanks;
  int i;
  for( blanks=0, i=0 ; i<*len ; i++ ){
@@ -253,7 +254,7 @@ void trim(char * str, int * len){
  *len = *len - blanks;
 }
 
-void process(char * codons, int length){
+void process(char * codons, unsigned long length){
  //elimino los {BLANK} de codons
  trim(codons, &length);
 
@@ -266,7 +267,8 @@ void process(char * codons, int length){
  int k = (codonStreamSize - remainder)/3;
  //iterate for each codon
  int i = 0;
- for( i ; i < k*3 ; i+=3 , incrementCurrentPosition() ){
+
+ for(i = 0 ; i < k*3 ; i+=3 , incrementCurrentPosition() ){
   char * aCodon = createCodon(codonStream+i); 
   //printf("|%s|i->%s ", aCodon, toAminoAcid(aCodon));
   printf("%s",toAminoAcid(aCodon));
@@ -287,7 +289,7 @@ void restartIncompleteCodon(){
 
 char * createCodon(char * codons){
  int i = 0;
- for(i ; i < 3; i++){
+ for(i = 0; i < 3; i++){
   codon[i] = codons[i];
  }
  codon[3] = '\0';
@@ -325,7 +327,7 @@ int main(int argc, char  ** argv){
   init();
   int code = yylex();
   if(code == INVALID_WORD){
-	printf("Palabra inválida\n");
+    printf("Palabra inválida\n");
   }
   return 0;
 }
@@ -335,67 +337,64 @@ char * toAminoAcid(char * codon){
   return "";
  }
  int i = 0;
- for(i ; i < strlen(codon); i++){
+ for(; i < strlen(codon); i++){
   if(codon[i]=='-')
-	codon[i]='A';
+    codon[i]='A';
  }
  switch(codon[0]){
-	case 'T': switch(codon[1]){
-			case 'T': switch(codon[2]){
-					case 'T':
-					case 'C': return "F";
-					default: return "L";
-				}
-			case 'C': return "S";
-			case 'A': switch(codon[2]){
-					case 'T':
-					case 'C': return "Y";
-				}
-			case 'G': switch(codon[2]){
-					case 'T':
-					case 'C': return "C";
-					default: "W";
-				}
-		}
- 	case 'C': switch(codon[1]){
-			case 'T': return "L";
-			case 'C': return "P";
-			case 'A': switch(codon[2]){
-					case 'T':
-					case 'C': return "H";
-					default: return "Q";
-			 	 }
-			case 'G': return "R";
-		 }
-	case 'A': switch(codon[1]){
-			case 'T':switch(codon[2]){
-					case 'G': return "M";
-					default: return "I";
-			 	 }
-			case 'C': return "T";
-			case 'A': switch(codon[2]){
-					case 'T':
-					case 'C': return "N";
-					default: return "K";
-			 	 }
-			case 'G': switch(codon[2]){
-					case 'T':
-					case 'C': return "S";
-					default: return "R";
-			 	 }
-					
-		}
-	case 'G': switch(codon[1]){
-			case 'T': return "V";
-			case 'C': return "A";
-			case 'A': switch(codon[2]){
-					case 'T':
-					case 'C': return "D";
-					default: return "E";
-			 	 }
-			case 'G': return "G";
-		}
+    case 'T': switch(codon[1]){
+            case 'T': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "F";
+                    default: return "L";
+                }
+            case 'C': return "S";
+            case 'A': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "Y";
+                }
+            case 'G': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "C";
+                }
+        }
+     case 'C': switch(codon[1]){
+            case 'T': return "L";
+            case 'C': return "P";
+            case 'A': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "H";
+                    default: return "Q";
+                  }
+            case 'G': return "R";
+         }
+    case 'A': switch(codon[1]){
+            case 'T':switch(codon[2]){
+                    case 'G': return "M";
+                    default: return "I";
+                  }
+            case 'C': return "T";
+            case 'A': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "N";
+                    default: return "K";
+                  }
+            case 'G': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "S";
+                    default: return "R";
+                  }
+        }
+    case 'G': switch(codon[1]){
+            case 'T': return "V";
+            case 'C': return "A";
+            case 'A': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "D";
+                    default: return "E";
+                  }
+            case 'G': return "G";
+        }
  }
- 
  return "";
 }
