@@ -16,26 +16,33 @@ SALIDA_S2="MTITMFTPIELPPTYYISLHMNVPISPLYPWGMPYTRSTSFSHTTTIYTNTNTNTTTIER KDSGICIP
 #
 # PRUEBAS
 #
-echo "\nejecutando: AUG[4]TTT------{AA-}*TTT{AAA,AAA,AAA,TTA}STOP"
-echo "AUG[4]TTT------{AA-}*TTT{AAA,AAA,AAA,TTA}STOP" | bin/$EXEC_NAME
+echo -e "\nejecutando: AUG[4]TTT------{AA-}*TTT{AAA,AAA,AAA,TTA}STOP"
+echo -e "AUG[4]TTT------{AA-}*TTT{AAA,AAA,AAA,TTA}STOP" | bin/$EXEC_NAME
 
-echo "\nejecutando: AUG[4]TTTSTOP"
-echo "AUG[4]TTTSTOP" | bin/$EXEC_NAME
+echo -e "\nejecutando: AUG[4]TTTSTOP"
+echo -e "AUG[4]TTTSTOP" | bin/$EXEC_NAME
 
-echo "\nejecutando: AUG[4]TT-STOP"
-echo "AUG[4]TT-STOP" | bin/$EXEC_NAME
+echo -e "\nejecutando: AUG[4]TT-STOP"
+echo -e "AUG[4]TT-STOP" | bin/$EXEC_NAME
 
-echo "\nejectuando: AUG[4]TTT{AA-}*[400]STOP"
-echo "AUG[4]TTT{AA-}*[400]STOP" | bin/$EXEC_NAME
+echo -e "\nejectuando: AUG[4]TTT{AA-}*[400]STOP"
+echo -e "AUG[4]TTT{AA-}*[400]STOP" | bin/$EXEC_NAME
 
-echo "\nejecutando: AUG[4]TTA--{A,AAA,ATT,TTT}[300]STOP"
-echo "AUG[4]TTA--{A,AAA,ATT,TTT}[300]STOP" | bin/$EXEC_NAME
+echo -e "\nejecutando: AUG[4]TTA--{A,AAA,ATT,TTT}[300]STOP"
+echo -e "AUG[4]TTA--{A,AAA,ATT,TTT}[300]STOP" | bin/$EXEC_NAME
 
-echo "\nProbando con ejemplo3.txt"
-bin/$EXEC_NAME examples/ejemplo3.txt
+echo -e "\nProbando con ejemplo3.txt"
+bin/$EXEC_NAME examples/givenExamples/ejemplo3.txt
 
-echo "\nProbando con ejemplo4.txt"
-bin/$EXEC_NAME examples/ejemplo4.txt
+echo -e "\nProbando con ejemplo4.txt"
+bin/$EXEC_NAME examples/givenExamples/ejemplo4.txt
 
-echo "\nProbando con ejemplo5.txt"
-bin/$EXEC_NAME examples/ejemplo5.txt
+echo -e "\nProbando con ejemplo5.txt"
+bin/$EXEC_NAME examples/givenExamples/ejemplo5.txt
+
+echo -e "\nProbando con collagen6.txt"
+bin/$EXEC_NAME examples/ourExamples/collagen6.txt
+
+echo -e "\nProbando con hemoglobinChain.txt"
+bin/$EXEC_NAME examples/ourExamples/hemoglobinChain.txt
+
