@@ -16,15 +16,16 @@ int currentPosition;
 char codon[4];
 char incompleteCodon[3];
 
-void repeat(char* toPrepend, char * toRepeat, int upperBound);
-void process(char * codons, int len);
 char * createCodon(char * codons);
 char * createString(char * codons, int len);
 char * toAminoAcid(char * codon);
-void incrementCurrentPosition();
 int getCurrentPosition();
-void iterativeProcess(int numberOfAvailableBases, char * toRepeat);
+int indexOfString(char *source, char *substring);
+void incrementCurrentPosition();
 void init();
+void iterativeProcess(int numberOfAvailableBases, char * toRepeat);
+void process(char * codons, int len);
+void repeat(char* toPrepend, char * toRepeat, int upperBound);
 
 %}
 %%
@@ -111,17 +112,18 @@ void init();
 
 
 
-int indexOfString(char *source, char *substring){
-char *dest = strstr(source, substring);
-return dest - source;
+int indexOfString(char *source, char *substring) {
+    char *dest = strstr(source, substring);
+    return dest - source;
 }
+
 void repeat(char* toPrepend, char * toRepeat, int index){
- char dest[strlen(toPrepend)+strlen(toRepeat)+1];
- strcpy( dest, toPrepend);
- strcat( dest, toRepeat); 
- process(dest,strlen(dest));
+char dest[strlen(toPrepend)+strlen(toRepeat)+1];
+strcpy( dest, toPrepend);
+strcat( dest, toRepeat); 
+process(dest,strlen(dest));
 //printf("index=%d   cp=%d    ", index, getCurrentPosition());
- if(index > getCurrentPosition()){
+if(index > getCurrentPosition()){
 //printf("1- %s   ",toRepeat);
   int numberOfAvailableBases = index - getCurrentPosition() - 1;
   iterativeProcess(numberOfAvailableBases, toRepeat);
@@ -159,7 +161,8 @@ void process(char * codons, int length){
  int k = (codonStreamSize - remainder)/3;
  //iterate for each codon
  int i = 0;
- for( i ; i < k*3 ; i+=3 , incrementCurrentPosition() ){
+
+ for(i = 0 ; i < k*3 ; i+=3 , incrementCurrentPosition() ){
   char * aCodon = createCodon(codonStream+i); 
   //printf("|%s|i->%s ", aCodon, toAminoAcid(aCodon));
   printf("%s",toAminoAcid(aCodon));
@@ -176,7 +179,7 @@ void process(char * codons, int length){
 
 char * createCodon(char * codons){
  int i = 0;
- for(i ; i < 3; i++){
+ for(i = 0; i < 3; i++){
   codon[i] = codons[i];
  }
  codon[3] = '\0';
@@ -214,62 +217,59 @@ char * toAminoAcid(char * codon){
   return "";
  }
  switch(codon[0]){
-	case 'T': switch(codon[1]){
-			case 'T': switch(codon[2]){
-					case 'T':
-					case 'C': return "F";
-					default: return "L";
-				}
-			case 'C': return "S";
-			case 'A': switch(codon[2]){
-					case 'T':
-					case 'C': return "Y";
-				}
-			case 'G': switch(codon[2]){
-					case 'T':
-					case 'C': return "C";
-					default: "W";
-				}
-		}
- 	case 'C': switch(codon[1]){
-			case 'T': return "L";
-			case 'C': return "P";
-			case 'A': switch(codon[2]){
-					case 'T':
-					case 'C': return "H";
-					default: return "Q";
-			 	 }
-			case 'G': return "R";
-		 }
-	case 'A': switch(codon[1]){
-			case 'T':switch(codon[2]){
-					case 'G': return "M";
-					default: return "I";
-			 	 }
-			case 'C': return "T";
-			case 'A': switch(codon[2]){
-					case 'T':
-					case 'C': return "N";
-					default: return "K";
-			 	 }
-			case 'G': switch(codon[2]){
-					case 'T':
-					case 'C': return "S";
-					default: return "R";
-			 	 }
-					
-		}
-	case 'G': switch(codon[1]){
-			case 'T': return "V";
-			case 'C': return "A";
-			case 'A': switch(codon[2]){
-					case 'T':
-					case 'C': return "D";
-					default: return "E";
-			 	 }
-			case 'G': return "G";
-		}
+    case 'T': switch(codon[1]){
+            case 'T': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "F";
+                    default: return "L";
+                }
+            case 'C': return "S";
+            case 'A': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "Y";
+                }
+            case 'G': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "C";
+                }
+        }
+     case 'C': switch(codon[1]){
+            case 'T': return "L";
+            case 'C': return "P";
+            case 'A': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "H";
+                    default: return "Q";
+                  }
+            case 'G': return "R";
+         }
+    case 'A': switch(codon[1]){
+            case 'T':switch(codon[2]){
+                    case 'G': return "M";
+                    default: return "I";
+                  }
+            case 'C': return "T";
+            case 'A': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "N";
+                    default: return "K";
+                  }
+            case 'G': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "S";
+                    default: return "R";
+                  }
+        }
+    case 'G': switch(codon[1]){
+            case 'T': return "V";
+            case 'C': return "A";
+            case 'A': switch(codon[2]){
+                    case 'T':
+                    case 'C': return "D";
+                    default: return "E";
+                  }
+            case 'G': return "G";
+        }
  }
- 
  return "";
 }
